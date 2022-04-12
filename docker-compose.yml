@@ -1,0 +1,27 @@
+version: '3'
+
+services:
+
+  mariadb_server:
+    image: mariadb
+    restart: always
+    environment:
+      - MARIADB_RANDOM_ROOT_PASSWORD=true
+      - MARIADB_USER=dbuser
+      - MARIADB_PASSWORD=dbpassword
+      - MARIADB_DATABASE=articledb
+    volumes:
+      - ./mariadb/scripts:/docker-entrypoint-initdb.d
+      - ./mariadb/data:/var/lib/mysql
+
+  api:
+    build:
+      dockerfile: Dockerfile
+      context: .
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      - SQL_CONNECTION_STRING=Server=mariadb_server;Database=articledb;Uid=dbuser;Pwd=dbpassword
+    depends_on:
+      - mariadb_server

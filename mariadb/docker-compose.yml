@@ -1,0 +1,17 @@
+version: '3'
+
+services:
+
+  mariadb_server:
+    image: mariadb
+    restart: always
+    environment:
+      - MARIADB_RANDOM_ROOT_PASSWORD=true
+      - MARIADB_USER=dbuser
+      - MARIADB_PASSWORD=dbpassword
+      - MARIADB_DATABASE=articledb
+    volumes:
+      - ./scripts:/docker-entrypoint-initdb.d
+      - ./data:/var/lib/mysql
+    ports:
+      - "3000:3306"

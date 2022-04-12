@@ -1,0 +1,5 @@
+.idea
+mariadb/data/
+*Dotsettings*
+*obj*
+*bin*
