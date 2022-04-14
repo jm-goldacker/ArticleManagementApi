@@ -46,6 +46,11 @@ public class ArticleRepository : IArticleRepository
 		_articleContext.Articles.Add(articleToAddInDatabase);
 	}
 
+	public void Delete(Article article)
+	{
+		_articleContext.Articles.Remove(article);
+	}
+
 	public async Task<int> SaveChangesAsync()
 	{
 		try

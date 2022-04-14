@@ -5,7 +5,7 @@ namespace ArticleManagementApi.Extensions;
 
 public static class ArticleAttributeExtensions
 {
-	public static AttributeResponseDto ToArticleAttributeDto(this ArticleAttribute articleAttribute)
+	public static AttributeResponseDto ToDto(this ArticleAttribute articleAttribute)
 	{
 		return new AttributeResponseDto()
 		{
