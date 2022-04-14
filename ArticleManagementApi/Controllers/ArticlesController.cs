@@ -4,9 +4,10 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ArticleManagementApi.Controllers;
 
-[Controller]
-[Route("api/[controller]")]
-public class ArticlesController : Controller
+[ApiController]
+[Route("api/v{version:apiVersion}/[controller]")]
+[ApiVersion("1.0")]
+public class ArticlesController : ControllerBase
 {
 	private readonly IArticleManager _articleManager;
 
@@ -15,6 +16,7 @@ public class ArticlesController : Controller
 		_articleManager = articleManager;
 	}
 
+	[MapToApiVersion("1.0")]
 	[HttpGet("{articleNumber}")]
 	public async Task<IActionResult> GetAsync(int articleNumber)
 	{
@@ -22,6 +24,7 @@ public class ArticlesController : Controller
 		return Ok(article);
 	}
 
+	[MapToApiVersion("1.0")]
 	[HttpGet]
 	public async Task<IActionResult> GetAll([FromQuery] DateRequestFilter dateRequestFilter, [FromQuery] string? title)
 	{
@@ -29,6 +32,7 @@ public class ArticlesController : Controller
 		return Ok(articles);
 	}
 
+	[MapToApiVersion("1.0")]
 	[HttpPost]
 	public async Task<IActionResult> AddArticleAsync([FromBody] ArticleRequestDto articleToRequest)
 	{
@@ -36,6 +40,7 @@ public class ArticlesController : Controller
 		return Created(nameof(addedArticle), addedArticle);
 	}
 
+	[MapToApiVersion("1.0")]
 	[HttpGet("{articleNumber}/attributes")]
 	public async Task<IActionResult> GetArticleAttributesAsync([FromRoute] int articleNumber)
 	{
@@ -43,6 +48,7 @@ public class ArticlesController : Controller
 		return Ok(attributes);
 	}
 
+	[MapToApiVersion("1.0")]
 	[HttpPost("{articleNumber}/attributes")]
 	public async Task<IActionResult> AddArticleAttributeAsync([FromRoute] int articleNumber,
 		[FromBody] AttributeRequestDto attributeToRequest)

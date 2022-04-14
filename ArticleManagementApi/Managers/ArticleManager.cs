@@ -31,14 +31,7 @@ public class ArticleManager : IArticleManager
 			(title == null || article.Attributes.Any(attribute => attribute.Title.Contains(title)))
 		);
 
-		var result = new List<ArticleResponseDto>();
-
-		await foreach (var article in articles)
-		{
-			result.Add(article.ToArticleDto());
-		}
-
-		return result;
+		return await articles.Select(article => article.ToArticleDto()).ToListAsync();
 	}
 
 	public async Task<ArticleResponseDto> Add(ArticleRequestDto articleRequestDto)
@@ -92,12 +85,7 @@ public class ArticleManager : IArticleManager
 	{
 		var article = await _articleRepository.GetAsync(articleNumber);
 
-		var result = new List<AttributeResponseDto>();
-
-		foreach (var attribute in article.Attributes)
-		{
-			result.Add(attribute.ToArticleAttributeDto());
-		}
+		var result = article.Attributes.Select(attribute => attribute.ToArticleAttributeDto()).ToList();
 
 		return result.AsReadOnly();
 	}
