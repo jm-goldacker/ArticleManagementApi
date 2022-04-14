@@ -36,9 +36,9 @@ public class ArticlesController : ControllerBase
 
 	[MapToApiVersion("1.0")]
 	[HttpPost]
-	public async Task<IActionResult> AddArticleAsync([FromBody] ArticleRequestDto articleToRequest)
+	public async Task<IActionResult> AddArticleAsync([FromBody] ArticlePostRequestDto articlePostToRequest)
 	{
-		var addedArticle = await _articleManager.AddArticleAsync(articleToRequest);
+		var addedArticle = await _articleManager.AddArticleAsync(articlePostToRequest);
 		return Created(nameof(addedArticle), addedArticle);
 	}
 

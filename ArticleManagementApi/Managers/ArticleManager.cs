@@ -50,9 +50,9 @@ public class ArticleManager : IArticleManager
 		}
 	}
 
-	public async Task<ArticleResponseDto> AddArticleAsync(ArticleRequestDto articleRequestDto)
+	public async Task<ArticleResponseDto> AddArticleAsync(ArticlePostRequestDto articlePostRequestDto)
 	{
-		var isAlreadyExisting = await _articleRepository.IsExistingAsync(articleRequestDto.ArticleNumber);
+		var isAlreadyExisting = await _articleRepository.IsExistingAsync(articlePostRequestDto.ArticleNumber);
 
 		if (isAlreadyExisting)
 		{
@@ -61,9 +61,9 @@ public class ArticleManager : IArticleManager
 
 		var article = new Article()
 		{
-			ArticleNumber = articleRequestDto.ArticleNumber,
-			Brand = articleRequestDto.Brand,
-			IsBulky = articleRequestDto.IsBulky
+			ArticleNumber = articlePostRequestDto.ArticleNumber,
+			Brand = articlePostRequestDto.Brand,
+			IsBulky = articlePostRequestDto.IsBulky
 		};
 
 		_articleRepository.Add(article);

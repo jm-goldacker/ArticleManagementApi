@@ -9,7 +9,7 @@ public interface IArticleManager
 {
 	Task<ArticleResponseDto> GetAsync(int articleNumber);
 	Task<IReadOnlyCollection<ArticleResponseDto>> GetAllAsync(DateRequestFilter dateRequestFilter, string? title);
-	Task<ArticleResponseDto> AddArticleAsync(ArticleRequestDto articleRequestDto);
+	Task<ArticleResponseDto> AddArticleAsync(ArticlePostRequestDto articlePostRequestDto);
 	Task<ArticleResponseDto?> PutArticleAsync(int articleNumber, ArticlePutRequestDto articleDto);
 	Task DeleteArticleAsync(int articleNumber);
 	Task<IReadOnlyCollection<AttributeResponseDto>> GetAttributesAsync(int articleNumber);
