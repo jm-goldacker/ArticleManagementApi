@@ -22,6 +22,6 @@ services:
       - "80:80"
       - "443:443"
     environment:
-      - SQL_CONNECTION_STRING=Server=mariadb_server;Database=articledb;Uid=dbuser;Pwd=dbpassword
+      - ASPNETCORE_ENVIRONMENT=Production
     depends_on:
       - mariadb_server

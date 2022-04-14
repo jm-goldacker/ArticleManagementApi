@@ -7,12 +7,18 @@ namespace ArticleManagementApi.Database;
 
 public class ArticleContext : DbContext
 {
+	private readonly IConfiguration _configuration;
 	public DbSet<Article> Articles => Set<Article>();
 	public DbSet<ArticleAttribute> ArticlesAttributes => Set<ArticleAttribute>();
 
+	public ArticleContext(IConfiguration configuration)
+	{
+		_configuration = configuration;
+	}
+
 	protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 	{
-		var connectionString = Environment.GetEnvironmentVariable("SQL_CONNECTION_STRING");
+		var connectionString = _configuration.GetConnectionString("ArticleDb");
 
 		if (connectionString == null)
 		{
