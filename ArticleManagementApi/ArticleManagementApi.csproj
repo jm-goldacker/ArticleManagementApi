@@ -10,6 +10,8 @@
 	<PropertyGroup>
 		<GenerateDocumentationFile>True</GenerateDocumentationFile>
 		<NoWarn>$(NoWarn);1591</NoWarn>
+		<DockerComposeProjectPath>..\docker-compose.dcproj</DockerComposeProjectPath>
+		<UserSecretsId>7a2fd7c6-b6ed-4b6d-9dbf-0594ea4ad7ec</UserSecretsId>
 	</PropertyGroup>
 
     <ItemGroup>
@@ -25,6 +27,7 @@
         <PrivateAssets>all</PrivateAssets>
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
+      <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.14.0" />
       <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="6.0.1" />
       <PackageReference Include="Swashbuckle.AspNetCore" Version="6.3.0" />
       <PackageReference Include="Swashbuckle.AspNetCore.Newtonsoft" Version="6.3.0" />
