@@ -17,14 +17,7 @@ public static class ArticleExtensions
 		};
 	}
 
-	public static void AddAttribute(this Article article, ArticleAttribute attribute)
-	{
-		article.Attributes.Add(attribute);
-		article.LastChanged = DateTime.Now;
-		article.IsApproved = article.IsAttributeForEachCountrySet();
-	}
-
-	private static bool IsAttributeForEachCountrySet(this Article article)
+	public static bool IsAttributeForEachCountrySet(this Article article)
 	{
 		var attributeCountries = article.Attributes.Select(attribute => attribute.Country);
 		var allCountries = Enum.GetValues<Country>();

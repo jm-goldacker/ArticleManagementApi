@@ -102,6 +102,7 @@ public class ArticleManager : IArticleManager
 		var existingArticle = await _articleRepository.GetAsync(articleNumber);
 		existingArticle.Brand = articleDto.Brand;
 		existingArticle.IsBulky = articleDto.IsBulky;
+		existingArticle.LastChanged = DateTime.Now;
 	}
 
 	private ArticleResponseDto AddNewArticle(int articleNumber, ArticlePutRequestDto articleDto)
@@ -145,7 +146,9 @@ public class ArticleManager : IArticleManager
 			Country = attributePostRequestDto.Country,
 		};
 
-		article.AddAttribute(attribute);
+		article.Attributes.Add(attribute);
+		article.LastChanged = DateTime.Now;
+		article.IsApproved = article.IsAttributeForEachCountrySet();
 		article.LastChanged = DateTime.Now;
 
 		await _articleRepository.SaveChangesAsync();
@@ -197,6 +200,7 @@ public class ArticleManager : IArticleManager
 		};
 
 		article.Attributes.Add(newAttribute);
+		article.IsApproved = article.IsAttributeForEachCountrySet();
 
 		return newAttribute.ToDto();
 	}
@@ -226,6 +230,7 @@ public class ArticleManager : IArticleManager
 		var attribute = GetSingleAttribute(article, country);
 
 		article.Attributes.Remove(attribute);
+		article.IsApproved = article.IsAttributeForEachCountrySet();
 		await _articleRepository.SaveChangesAsync();
 	}
 
