@@ -1,3 +1,4 @@
+using System.Reflection;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.SwaggerGen;
@@ -12,6 +13,10 @@ public class SwaggerConfigurations : IConfigureOptions<SwaggerGenOptions>
 
 	public void Configure(SwaggerGenOptions options)
 	{
+		string xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+		string xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+		options.IncludeXmlComments(xmlPath);
+
 		foreach (var desc in _provider.ApiVersionDescriptions)
 		{
 			options.SwaggerDoc(desc.GroupName, new Microsoft.OpenApi.Models.OpenApiInfo

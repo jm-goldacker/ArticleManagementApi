@@ -4,6 +4,7 @@ namespace ArticleManagementApi.Models.Database;
 
 public class Article
 {
+	// Only for ef core
 	public int Id { get; set; }
 
 	public int ArticleNumber { get; set; }
