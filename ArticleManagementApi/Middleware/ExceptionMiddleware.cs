@@ -7,10 +7,12 @@ namespace ArticleManagementApi.Middleware;
 public class ExceptionMiddleware
 {
 	private readonly RequestDelegate _next;
+	private readonly ILogger<ExceptionMiddleware> _logger;
 
-	public ExceptionMiddleware(RequestDelegate next)
+	public ExceptionMiddleware(RequestDelegate next, ILogger<ExceptionMiddleware> logger)
 	{
 		_next = next;
+		_logger = logger;
 	}
 
 	public async Task InvokeAsync(HttpContext httpContext)
@@ -21,10 +23,12 @@ public class ExceptionMiddleware
 		}
 		catch (HttpResponseException ex)
 		{
+			_logger.LogError("Exception occured and was catched in Exception Middleware: {ex}", ex);
 			await HandleHttpResponseException(httpContext, ex);
 		}
 		catch (Exception ex)
 		{
+			_logger.LogError("Exception occured and was catched in Exception Middleware: {ex}", ex);
 			await HandleExceptionAsync(httpContext, ex);
 		}
 	}

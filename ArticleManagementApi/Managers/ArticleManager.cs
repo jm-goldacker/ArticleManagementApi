@@ -12,10 +12,12 @@ namespace ArticleManagementApi.Managers;
 public class ArticleManager : IArticleManager
 {
 	private readonly IArticleRepository _articleRepository;
+	private readonly ILogger<ArticleManager> _logger;
 
-	public ArticleManager(IArticleRepository articleRepository)
+	public ArticleManager(IArticleRepository articleRepository, ILogger<ArticleManager> logger)
 	{
 		_articleRepository = articleRepository;
+		_logger = logger;
 	}
 	public async Task<ArticleResponseDto> GetAsync(int articleNumber)
 	{
@@ -41,8 +43,9 @@ public class ArticleManager : IArticleManager
 
 			return articles.Select(article => article.ToArticleDto()).ToList().AsReadOnly();
 		}
-		catch (OperationCanceledException)
+		catch (OperationCanceledException ex)
 		{
+			_logger.LogError("Timeout occured while querying database for all articles: ", ex);
 			throw new HttpResponseException(HttpStatusCode.InternalServerError, "Timeout while querying database");
 		}
 	}
@@ -163,8 +166,9 @@ public class ArticleManager : IArticleManager
 			await _articleRepository.SaveChangesAsync();
 			return createdArticleDto;
 		}
-		catch (InvalidOperationException)
+		catch (InvalidOperationException ex)
 		{
+			_logger.LogError($"Detected multiple attributes with country {country} for article {articleNumber}: ", ex);
 			throw new HttpResponseException(HttpStatusCode.InternalServerError,
 				"There are multiple attributes with the same county. Please report this as a bug");
 		}

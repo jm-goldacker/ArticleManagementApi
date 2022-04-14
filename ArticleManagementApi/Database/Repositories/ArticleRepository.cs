@@ -9,10 +9,12 @@ namespace ArticleManagementApi.Database.Repositories;
 public class ArticleRepository : IArticleRepository
 {
 	private readonly ArticleContext _articleContext;
+	private readonly ILogger<ArticleRepository> _logger;
 
-	public ArticleRepository(ArticleContext articleContext)
+	public ArticleRepository(ArticleContext articleContext, ILogger<ArticleRepository> logger)
 	{
 		_articleContext = articleContext;
+		_logger = logger;
 	}
 
 	public async Task<Article> GetAsync(int articleNumber)
@@ -22,8 +24,9 @@ public class ArticleRepository : IArticleRepository
 			var article = await _articleContext.Articles.FirstAsync(a => a.ArticleNumber == articleNumber);
 			return article;
 		}
-		catch (InvalidOperationException)
+		catch (InvalidOperationException ex)
 		{
+			_logger.LogError($"User requested article {articleNumber} that is not found ", ex);
 			throw new HttpResponseException(HttpStatusCode.NotFound, $"article number {articleNumber} not found");
 		}
 
@@ -58,13 +61,15 @@ public class ArticleRepository : IArticleRepository
 			var writtenChanges = await _articleContext.SaveChangesAsync();
 			return writtenChanges;
 		}
-		catch (DbUpdateConcurrencyException)
+		catch (DbUpdateConcurrencyException ex)
 		{
+			_logger.LogError("Concurrency occured while saving to database: ", ex);
 			throw new HttpResponseException(HttpStatusCode.InternalServerError,
 				"Cannot saves changes due to concurrent access to database. Please try again.");
 		}
-		catch (DbUpdateException)
+		catch (DbUpdateException ex)
 		{
+			_logger.LogError("Error occured while saving to database: ", ex);
 			throw new HttpResponseException(HttpStatusCode.InternalServerError,
 				"An error occured while saving to the database");
 		}
