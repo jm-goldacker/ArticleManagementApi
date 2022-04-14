@@ -29,9 +29,9 @@ public class ArticleRepository : IArticleRepository
 
 	}
 
-	public IAsyncEnumerable<Article> GetAllAsync(Expression<Func<Article, bool>> filter)
+	public async Task<List<Article>> GetAllAsync(Expression<Func<Article, bool>> filter, CancellationToken cancelToken)
 	{
-		var articles = _articleContext.Articles.Where(filter).ToAsyncEnumerable();
+		var articles = await _articleContext.Articles.Where(filter).ToListAsync(cancelToken);
 		return articles;
 	}
 

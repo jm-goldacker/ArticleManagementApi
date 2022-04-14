@@ -25,14 +25,26 @@ public class ArticleManager : IArticleManager
 
 	public async Task<IReadOnlyCollection<ArticleResponseDto>> GetAllAsync(DateRequestFilter dateRequestFilter, string? title)
 	{
-		var articles = _articleRepository.GetAllAsync
-		(article =>
-			(dateRequestFilter.From == null || article.LastChanged >= dateRequestFilter.From) &&
-			(dateRequestFilter.To == null || article.LastChanged <= dateRequestFilter.To) &&
-			(title == null || article.Attributes.Any(attribute => attribute.Title.Contains(title)))
-		);
+		using var cancelTokenSource = new CancellationTokenSource();
+		cancelTokenSource.CancelAfter(60000);
+		var cancelToken = cancelTokenSource.Token;
 
-		return await articles.Select(article => article.ToArticleDto()).ToListAsync();
+		try
+		{
+			var articles = await _articleRepository.GetAllAsync
+			(article =>
+					(dateRequestFilter.From == null || article.LastChanged >= dateRequestFilter.From) &&
+					(dateRequestFilter.To == null || article.LastChanged <= dateRequestFilter.To) &&
+					(title == null || article.Attributes.Any(attribute => attribute.Title.Contains(title))),
+				cancelToken
+			);
+
+			return articles.Select(article => article.ToArticleDto()).ToList().AsReadOnly();
+		}
+		catch (OperationCanceledException)
+		{
+			throw new HttpResponseException(HttpStatusCode.InternalServerError, "Timeout while querying database");
+		}
 	}
 
 	public async Task<ArticleResponseDto> AddArticleAsync(ArticleRequestDto articleRequestDto)

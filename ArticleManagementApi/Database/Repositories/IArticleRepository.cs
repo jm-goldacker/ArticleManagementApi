@@ -6,7 +6,7 @@ namespace ArticleManagementApi.Database.Repositories;
 public interface IArticleRepository
 {
 	Task<Article> GetAsync(int articleNumber);
-	IAsyncEnumerable<Article> GetAllAsync(Expression<Func<Article, bool>> filter);
+	Task<List<Article>> GetAllAsync(Expression<Func<Article, bool>> filter, CancellationToken cancelToken);
 	void Add(Article articleToAddInDatabase);
 	void Delete(Article article);
 	Task<int>  SaveChangesAsync();
