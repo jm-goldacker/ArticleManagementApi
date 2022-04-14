@@ -8,10 +8,7 @@ The API is written in .NET 6 and uses EF Core.
 
 Run `docker-compose up` in the root directory. It starts the API and a MariaDb server. Now visit `http://localhost/swagger` to see the Swagger documentation.
 
-For development purposes you can use the launch configurations inside Visual Studio or Jetbrains Rider. For the MariaDb server run `docker-compose up` in the mariadb/ directory.
-You can reach Swagger at 'https://localhost:5001/swagger'.
-
-I created a Docker run configuration inside Jetbrains Rider but sadly it's not added to the launch configurations file. I might add it via Visual Studio later.
+For development purposes you can use the launch configurations inside Visual Studio or Jetbrains Rider.
 
 ## Requirements
 
