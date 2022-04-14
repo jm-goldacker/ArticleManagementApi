@@ -9,6 +9,7 @@ using ArticleManagementApi.Models.Dtos.Response;
 
 namespace ArticleManagementApi.Managers;
 
+/// <inheritdoc/>
 public class ArticleManager : IArticleManager
 {
 	private readonly IArticleRepository _articleRepository;
@@ -19,13 +20,17 @@ public class ArticleManager : IArticleManager
 		_articleRepository = articleRepository;
 		_logger = logger;
 	}
-	public async Task<ArticleResponseDto> GetAsync(int articleNumber)
+
+	/// <inheritdoc/>
+	public async Task<ArticleResponseDto> GetArticleAsync(int articleNumber)
 	{
 		var article = await _articleRepository.GetAsync(articleNumber);
 		return article.ToArticleDto();
 	}
 
-	public async Task<IReadOnlyCollection<ArticleResponseDto>> GetAllAsync(DateRequestFilter dateRequestFilter, string? title)
+	/// <inheritdoc/>
+	/// <exception cref="HttpResponseException">thrown if timeout occurs while querying database</exception>
+	public async Task<IReadOnlyCollection<ArticleResponseDto>> GetAllArticlesAsync(DateRequestFilter dateRequestFilter, string? title)
 	{
 		using var cancelTokenSource = new CancellationTokenSource();
 		cancelTokenSource.CancelAfter(60000);
@@ -50,7 +55,8 @@ public class ArticleManager : IArticleManager
 		}
 	}
 
-	public async Task<ArticleResponseDto> AddArticleAsync(ArticlePostRequestDto articlePostRequestDto)
+	/// <inheritdoc/>
+	public async Task<ArticleResponseDto> CreateArticleAsync(ArticlePostRequestDto articlePostRequestDto)
 	{
 		var isAlreadyExisting = await _articleRepository.IsExistingAsync(articlePostRequestDto.ArticleNumber);
 
@@ -72,7 +78,8 @@ public class ArticleManager : IArticleManager
 		return article.ToArticleDto();
 	}
 
-	public async Task<ArticleResponseDto?> PutArticleAsync(int articleNumber, ArticlePutRequestDto articleDto)
+	/// <inheritdoc/>
+	public async Task<ArticleResponseDto?> CreateOrUpdateArticleAsync(int articleNumber, ArticlePutRequestDto articleDto)
 	{
 		ArticleResponseDto? createdArticle = null;
 		var isExisting = await _articleRepository.IsExistingAsync(articleNumber);
@@ -110,6 +117,7 @@ public class ArticleManager : IArticleManager
 		return newArticle.ToArticleDto();
 	}
 
+	/// <inheritdoc/>
 	public async Task DeleteArticleAsync(int articleNumber)
 	{
 		var article = await _articleRepository.GetAsync(articleNumber);
@@ -117,11 +125,13 @@ public class ArticleManager : IArticleManager
 		await _articleRepository.SaveChangesAsync();
 	}
 
-	public async Task<AttributeResponseDto?> AddAttributeAsync(int articleNumber, AttributeRequestDto attributeRequestDto)
+	/// <inheritdoc/>
+	/// <exception cref="HttpResponseException">thrown if attribute exists already for country and article</exception>
+	public async Task<AttributeResponseDto?> AddAttributeAsync(int articleNumber, AttributePostRequestDto attributePostRequestDto)
 	{
 		var article = await _articleRepository.GetAsync(articleNumber);
 
-		if (article.Attributes.Any(attribute => attribute.Country == attributeRequestDto.Country))
+		if (article.Attributes.Any(attribute => attribute.Country == attributePostRequestDto.Country))
 		{
 			throw new HttpResponseException(HttpStatusCode.Conflict,
 				"Attribute for country and article exists already");
@@ -129,10 +139,10 @@ public class ArticleManager : IArticleManager
 
 		var attribute = new ArticleAttribute()
 		{
-			Color = attributeRequestDto.Color,
-			Description = attributeRequestDto.Description,
-			Title = attributeRequestDto.Title,
-			Country = attributeRequestDto.Country,
+			Color = attributePostRequestDto.Color,
+			Description = attributePostRequestDto.Description,
+			Title = attributePostRequestDto.Title,
+			Country = attributePostRequestDto.Country,
 		};
 
 		article.AddAttribute(attribute);
@@ -143,7 +153,9 @@ public class ArticleManager : IArticleManager
 		return attribute.ToDto();
 	}
 
-	public async Task<AttributeResponseDto?> PutAttributeAsync(int articleNumber, Country country, AttributePutRequestDto attributeDto)
+	/// <inheritdoc/>
+	/// <exception cref="HttpResponseException">thrown if article has multiple attributes</exception>
+	public async Task<AttributeResponseDto?> CreateOrUpdateAttributeAsync(int articleNumber, Country country, AttributePutRequestDto attributeDto)
 	{
 		AttributeResponseDto? createdArticleDto = null;
 
@@ -197,6 +209,7 @@ public class ArticleManager : IArticleManager
 		attribute.LastChange = DateTime.Now;
 	}
 
+	/// <inheritdoc/>
 	public async Task<AttributeResponseDto> GetAttributeAsync(int articleNumber, Country country)
 	{
 		var article = await _articleRepository.GetAsync(articleNumber);
@@ -205,6 +218,8 @@ public class ArticleManager : IArticleManager
 		return attribute.ToDto();
 	}
 
+	/// <inheritdoc/>
+	/// <exception cref="HttpResponseException">thrown if attribute is not found or article has multiple attributes for same country</exception>
 	public async Task DeleteAttributeAsync(int articleNumber, Country country)
 	{
 		var article = await _articleRepository.GetAsync(articleNumber);
@@ -227,6 +242,7 @@ public class ArticleManager : IArticleManager
 		};
 	}
 
+	/// <inheritdoc/>
 	public async Task<IReadOnlyCollection<AttributeResponseDto>> GetAttributesAsync(int articleNumber)
 	{
 		var article = await _articleRepository.GetAsync(articleNumber);

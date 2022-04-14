@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ArticleManagementApi.Database.Repositories;
 
+/// <inheritdoc/>
 public class ArticleRepository : IArticleRepository
 {
 	private readonly ArticleContext _articleContext;
@@ -17,6 +18,8 @@ public class ArticleRepository : IArticleRepository
 		_logger = logger;
 	}
 
+	/// <inheritdoc/>
+	/// <exception cref="HttpResponseException">thrown if article is not found</exception>
 	public async Task<Article> GetAsync(int articleNumber)
 	{
 		try
@@ -32,28 +35,34 @@ public class ArticleRepository : IArticleRepository
 
 	}
 
+	/// <inheritdoc/>
 	public async Task<List<Article>> GetAllAsync(Expression<Func<Article, bool>> filter, CancellationToken cancelToken)
 	{
 		var articles = await _articleContext.Articles.Where(filter).ToListAsync(cancelToken);
 		return articles;
 	}
 
+	/// <inheritdoc/>
 	public async Task<bool> IsExistingAsync(int articleNumber)
 	{
 		var isExisting = await _articleContext.Articles.AnyAsync(a => a.ArticleNumber == articleNumber);
 		return isExisting;
 	}
 
+	/// <inheritdoc/>
 	public void Add(Article articleToAddInDatabase)
 	{
 		_articleContext.Articles.Add(articleToAddInDatabase);
 	}
 
+	/// <inheritdoc/>
 	public void Delete(Article article)
 	{
 		_articleContext.Articles.Remove(article);
 	}
 
+	/// <inheritdoc/>
+	/// <exception cref="HttpResponseException">thrown if concurrency is detected or other error occurs while saving</exception>
 	public async Task<int> SaveChangesAsync()
 	{
 		try
