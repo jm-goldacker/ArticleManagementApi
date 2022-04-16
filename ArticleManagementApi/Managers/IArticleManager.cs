@@ -27,9 +27,9 @@ public interface IArticleManager
 	/// <summary>
 	/// Creates an article.
 	/// </summary>
-	/// <param name="articlePostRequestDto">dto of the article</param>
+	/// <param name="articleDto">dto of the article</param>
 	/// <returns>added article</returns>
-	Task<ArticleResponseDto> CreateArticleAsync(ArticlePostRequestDto articlePostRequestDto);
+	Task<ArticleResponseDto> CreateArticleAsync(ArticlePostRequestDto articleDto);
 
 	/// <summary>
 	/// Creates a new article or updates an existing article.
@@ -57,9 +57,9 @@ public interface IArticleManager
 	/// Adds an attribute to an article.
 	/// </summary>
 	/// <param name="articleNumber">number of the article</param>
-	/// <param name="attributePostRequestDto">attribute</param>
+	/// <param name="attributeDto">attribute</param>
 	/// <returns></returns>
-	Task<AttributeResponseDto?> AddAttributeAsync(int articleNumber, AttributePostRequestDto attributePostRequestDto);
+	Task<AttributeResponseDto?> AddAttributeAsync(int articleNumber, AttributePostRequestDto attributeDto);
 
 	/// <summary>
 	/// Creates or updates an attribute of an article.

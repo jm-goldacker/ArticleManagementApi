@@ -56,21 +56,17 @@ public class ArticleManager : IArticleManager
 	}
 
 	/// <inheritdoc/>
-	public async Task<ArticleResponseDto> CreateArticleAsync(ArticlePostRequestDto articlePostRequestDto)
+	public async Task<ArticleResponseDto> CreateArticleAsync(ArticlePostRequestDto articleDto)
 	{
-		var isAlreadyExisting = await _articleRepository.IsExistingAsync(articlePostRequestDto.ArticleNumber);
+		var isAlreadyExisting = await _articleRepository.IsExistingAsync(articleDto.ArticleNumber);
 
 		if (isAlreadyExisting)
 		{
 			throw new HttpResponseException(HttpStatusCode.Conflict, "Article exists already");
 		}
 
-		var article = new Article()
-		{
-			ArticleNumber = articlePostRequestDto.ArticleNumber,
-			Brand = articlePostRequestDto.Brand,
-			IsBulky = articlePostRequestDto.IsBulky
-		};
+		var article = new Article(articleDto.ArticleNumber, articleDto.Brand,
+			articleDto.IsBulky);
 
 		_articleRepository.Add(article);
 		await _articleRepository.SaveChangesAsync();
@@ -86,18 +82,18 @@ public class ArticleManager : IArticleManager
 
 		if (isExisting)
 		{
-			await UpdateExistingArticle(articleNumber, articleDto);
+			await UpdateExistingArticleFromPutRequest(articleNumber, articleDto);
 		}
 		else
 		{
-			createdArticle = AddNewArticle(articleNumber, articleDto);
+			createdArticle = AddNewArticleFromPutRequest(articleNumber, articleDto);
 		}
 
 		await _articleRepository.SaveChangesAsync();
 		return createdArticle;
 	}
 
-	private async Task UpdateExistingArticle(int articleNumber, ArticlePutRequestDto articleDto)
+	private async Task UpdateExistingArticleFromPutRequest(int articleNumber, ArticlePutRequestDto articleDto)
 	{
 		var existingArticle = await _articleRepository.GetAsync(articleNumber);
 		existingArticle.Brand = articleDto.Brand;
@@ -105,14 +101,9 @@ public class ArticleManager : IArticleManager
 		existingArticle.LastChanged = DateTime.Now;
 	}
 
-	private ArticleResponseDto AddNewArticle(int articleNumber, ArticlePutRequestDto articleDto)
+	private ArticleResponseDto AddNewArticleFromPutRequest(int articleNumber, ArticlePutRequestDto articleDto)
 	{
-		var newArticle = new Article()
-		{
-			ArticleNumber = articleNumber,
-			Brand = articleDto.Brand,
-			IsBulky = articleDto.IsBulky
-		};
+		var newArticle = new Article(articleNumber, articleDto.Brand, articleDto.IsBulky);
 
 		_articleRepository.Add(newArticle);
 		return newArticle.ToArticleDto();
@@ -128,23 +119,18 @@ public class ArticleManager : IArticleManager
 
 	/// <inheritdoc/>
 	/// <exception cref="HttpResponseException">thrown if attribute exists already for country and article</exception>
-	public async Task<AttributeResponseDto?> AddAttributeAsync(int articleNumber, AttributePostRequestDto attributePostRequestDto)
+	public async Task<AttributeResponseDto?> AddAttributeAsync(int articleNumber, AttributePostRequestDto attributeDto)
 	{
 		var article = await _articleRepository.GetAsync(articleNumber);
 
-		if (article.Attributes.Any(attribute => attribute.Country == attributePostRequestDto.Country))
+		if (article.Attributes.Any(attribute => attribute.Country == attributeDto.Country))
 		{
 			throw new HttpResponseException(HttpStatusCode.Conflict,
 				"Attribute for country and article exists already");
 		}
 
-		var attribute = new ArticleAttribute()
-		{
-			Color = attributePostRequestDto.Color,
-			Description = attributePostRequestDto.Description,
-			Title = attributePostRequestDto.Title,
-			Country = attributePostRequestDto.Country,
-		};
+		var attribute = new ArticleAttribute(attributeDto.Title, attributeDto.Description,
+			attributeDto.Color, attributeDto.Country);
 
 		article.Attributes.Add(attribute);
 		article.LastChanged = DateTime.Now;
@@ -191,13 +177,8 @@ public class ArticleManager : IArticleManager
 
 	private static AttributeResponseDto AddNewAttribute(Country country, AttributePutRequestDto attributeDto, Article article)
 	{
-		var newAttribute = new ArticleAttribute()
-		{
-			Color = attributeDto.Color,
-			Country = country,
-			Description = attributeDto.Description,
-			Title = attributeDto.Title
-		};
+		var newAttribute =
+			new ArticleAttribute(attributeDto.Title, attributeDto.Description, attributeDto.Color, country);
 
 		article.Attributes.Add(newAttribute);
 		article.IsApproved = article.IsAttributeForEachCountrySet();
