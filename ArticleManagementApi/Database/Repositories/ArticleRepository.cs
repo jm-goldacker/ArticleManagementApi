@@ -29,7 +29,7 @@ public class ArticleRepository : IArticleRepository
 		}
 		catch (InvalidOperationException ex)
 		{
-			_logger.LogError($"User requested article {articleNumber} that is not found ", ex);
+			_logger.LogError("User requested article {articleNumber} that is not found: {ex}", articleNumber, ex);
 			throw new HttpResponseException(HttpStatusCode.NotFound, $"article number {articleNumber} not found");
 		}
 
@@ -72,13 +72,13 @@ public class ArticleRepository : IArticleRepository
 		}
 		catch (DbUpdateConcurrencyException ex)
 		{
-			_logger.LogError("Concurrency occured while saving to database: ", ex);
+			_logger.LogError("Concurrency occured while saving to database: {ex}", ex);
 			throw new HttpResponseException(HttpStatusCode.InternalServerError,
 				"Cannot saves changes due to concurrent access to database. Please try again.");
 		}
 		catch (DbUpdateException ex)
 		{
-			_logger.LogError("Error occured while saving to database: ", ex);
+			_logger.LogError("Error occured while saving to database: {ex}", ex);
 			throw new HttpResponseException(HttpStatusCode.InternalServerError,
 				"An error occured while saving to the database");
 		}

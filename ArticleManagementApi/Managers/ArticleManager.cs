@@ -50,7 +50,7 @@ public class ArticleManager : IArticleManager
 		}
 		catch (OperationCanceledException ex)
 		{
-			_logger.LogError("Timeout occured while querying database for all articles: ", ex);
+			_logger.LogError("Timeout occured while querying database for all articles: {ex}", ex);
 			throw new HttpResponseException(HttpStatusCode.InternalServerError, "Timeout while querying database");
 		}
 	}
@@ -169,7 +169,8 @@ public class ArticleManager : IArticleManager
 		}
 		catch (InvalidOperationException ex)
 		{
-			_logger.LogError($"Detected multiple attributes with country {country} for article {articleNumber}: ", ex);
+			_logger.LogError("Detected multiple attributes with country {country} for article {articleNumber}: {ex}",
+				country, articleNumber, ex);
 			throw new HttpResponseException(HttpStatusCode.InternalServerError,
 				"There are multiple attributes with the same county. Please report this as a bug");
 		}

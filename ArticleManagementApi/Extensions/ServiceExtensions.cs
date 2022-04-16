@@ -33,10 +33,7 @@ public static class ServiceExtensions
 
 	public static void AddSwaggerVersioning(this IServiceCollection serviceCollection)
 	{
-		serviceCollection.AddSwaggerGen(options => {
-			// for further customization
-			//options.OperationFilter<DefaultValuesFilter>();
-		});
+		serviceCollection.AddSwaggerGen();
 		serviceCollection.ConfigureOptions<SwaggerConfigurations>();
 
 	}
