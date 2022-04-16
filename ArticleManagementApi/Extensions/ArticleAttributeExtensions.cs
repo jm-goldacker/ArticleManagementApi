@@ -7,12 +7,9 @@ public static class ArticleAttributeExtensions
 {
 	public static AttributeResponseDto ToDto(this ArticleAttribute articleAttribute)
 	{
-		return new AttributeResponseDto()
-		{
-			Color = articleAttribute.Color,
-			Country = articleAttribute.Country,
-			Description = articleAttribute.Description,
-			Title = articleAttribute.Title
-		};
+		return new AttributeResponseDto(articleAttribute.Title,
+			articleAttribute.Description,
+			articleAttribute.Color,
+			articleAttribute.Country);
 	}
 }

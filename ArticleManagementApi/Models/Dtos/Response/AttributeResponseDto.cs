@@ -1,12 +1,10 @@
 namespace ArticleManagementApi.Models.Dtos.Response;
 
-public class AttributeResponseDto
-{
-	public string Title { get; init; } = string.Empty;
-
-	public string Description { get; init; } = string.Empty;
-
-	public string Color { get; init; } = string.Empty;
-
-	public Country Country { get; set; }
-}
+/// <summary>
+/// Response model for attributes of articles.
+/// </summary>
+/// <param name="Title">title of article</param>
+/// <param name="Description">description of article</param>
+/// <param name="Color">color of article</param>
+/// <param name="Country">country for which this attribute is</param>
+public record AttributeResponseDto(string Title, string Description, string Color, Country Country);

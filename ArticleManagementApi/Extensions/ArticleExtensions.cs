@@ -8,13 +8,7 @@ public static class ArticleExtensions
 {
 	public static ArticleResponseDto ToArticleDto(this Article article)
 	{
-		return new ArticleResponseDto()
-		{
-			ArticleNumber = article.ArticleNumber,
-			Brand = article.Brand,
-			IsApproved = article.IsApproved,
-			IsBulky = article.IsBulky
-		};
+		return new ArticleResponseDto(article.ArticleNumber, article.Brand, article.IsBulky, article.IsApproved);
 	}
 
 	public static bool IsAttributeForEachCountrySet(this Article article)
